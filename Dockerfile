@@ -25,8 +25,11 @@ RUN symfony new /var/www/symfony 2.8
 EXPOSE 8000
 
 # RUN cp $(whereis catchy-io-php | cut -d:  -f2)/5.6/catchy.so $(php -i | grep 'extension_dir' | cut -d' ' -f3)
-RUN service catchy-io-daemon start
+
+# This is not a real application_key
+RUN echo "catchy.application_key = 5eaF00dC0c0aBeef1473da9618881f42abcb8f63" >> $(php --ini | grep "catchy")
+COPY start.sh /usr/bin
 
 RUN echo "\033[1;36mThe Webserver is: http://$(ifconfig eth0 | egrep -o "inet addr:[0-9\.]+" | cut -d: -f2):8000\033[0m"
 
-CMD ["php", "/var/www/symfony/app/console", "server:run", "0.0.0.0:8000"]
+CMD ["start.sh"]
